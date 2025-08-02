@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import authRoutes from './routes/authRoutes';
 import categoryRoutes from './routes/categoryRoutes';
-import quotationRoutes from './routes/quotationRoutes'; 
+import quotationRoutes from './routes/quotation';
 
 dotenv.config();
 
@@ -17,6 +17,8 @@ app.use('/api/auth', authRoutes);
 // Add more routes later: /api/categories, /api/products, etc.
 app.use('/api/categories', categoryRoutes);
 app.use('/api/quotation', quotationRoutes);
+
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

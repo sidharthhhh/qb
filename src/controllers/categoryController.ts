@@ -5,19 +5,27 @@ export const getCategoryOptions = async (req: Request, res: Response) => {
   const categoryId = req.params.id;
 
   try {
-    const [materials] = await db.query(
+    // 🧱 Get materials for category
+    const [materials]: any = await db.query(
       'SELECT id, name FROM materials WHERE category_id = ?',
       [categoryId]
     );
 
-    const [sizes] = await db.query('SELECT id, label FROM sizes');
+    // 📏 Get all sizes
+    const [sizes]: any = await db.query('SELECT id, label FROM sizes');
 
-    const [accessories] = await db.query('SELECT id, name, price FROM accessories');
+    // 🧩 Get all accessories
+    const [accessories]: any = await db.query(
+      'SELECT id, name, size, price FROM accessories'
+    );
 
-    const [powerSupplies] = await db.query(
-      `SELECT ps.id, ps.name, ps.price, s.label as size, ps.switch, ps.fan, ps.dimmer, ps.curtain
+    // 🔌 Get power supply options linked to this category
+    const [powerSupplies]: any = await db.query(
+      `SELECT ps.id, ps.name, ps.price, s.label AS size_label, ps.size_id
        FROM power_supply_options ps
-       JOIN sizes s ON ps.size_id = s.id`
+       JOIN sizes s ON ps.size_id = s.id
+       WHERE ps.category_id = ?`,
+      [categoryId]
     );
 
     res.json({
@@ -27,7 +35,7 @@ export const getCategoryOptions = async (req: Request, res: Response) => {
       power_supplies: powerSupplies,
     });
   } catch (err) {
-    console.error(err);
+    console.error('[getCategoryOptions] Error:', err);
     res.status(500).json({ msg: 'Failed to fetch category options' });
   }
 };
