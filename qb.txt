@@ -1,0 +1,227 @@
+mysql -u root -p
+CREATE DATABASE qb;
+USE qb;
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'user') DEFAULT 'user',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+SHOW TABLES;
+DESCRIBE users;
+USE qb;
+
+-- 1. CATEGORIES
+CREATE TABLE IF NOT EXISTS categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT
+);
+
+-- 2. MATERIALS
+CREATE TABLE IF NOT EXISTS materials (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    category_id INT,
+    FOREIGN KEY (category_id) REFERENCES categories(id)
+);
+
+-- 3. SIZES
+CREATE TABLE IF NOT EXISTS sizes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    label VARCHAR(10) NOT NULL
+);
+
+-- 4. MATERIAL + SIZE PRICING
+CREATE TABLE IF NOT EXISTS material_size_prices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    material_id INT,
+    size_id INT,
+    price DECIMAL(10,2),
+    FOREIGN KEY (material_id) REFERENCES materials(id),
+    FOREIGN KEY (size_id) REFERENCES sizes(id)
+);
+
+-- 5. ACCESSORIES
+CREATE TABLE IF NOT EXISTS accessories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    size INT,
+    price DECIMAL(10,2)
+);
+
+-- 6. POWER SUPPLY OPTIONS (PCB)
+CREATE TABLE IF NOT EXISTS power_supply_options (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    size_id INT,
+    price DECIMAL(10,2),
+    switch INT,
+    fan INT,
+    dimmer INT,
+    curtain INT,
+    FOREIGN KEY (size_id) REFERENCES sizes(id)
+);
+INSERT INTO categories (name, description)
+VALUES ('Custom Touch Switch Board', 'Modular smart switchboards with configurable materials and components');
+------------------------
+USE qb;
+
+-- 1. Categories
+CREATE TABLE IF NOT EXISTS categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT
+);
+
+INSERT INTO categories (name, description) VALUES
+('Custom Touch Switch Board', 'Modular switchboards with materials, sizes, and PCB options');
+
+-- 2. Materials
+CREATE TABLE IF NOT EXISTS materials (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    category_id INT,
+    FOREIGN KEY (category_id) REFERENCES categories(id)
+);
+
+INSERT INTO materials (name, category_id) VALUES
+('Acrylic', 1),
+('Edge', 1),
+('Glass', 1),
+('Glass + Edge', 1),
+('Royal Edge', 1);
+
+-- 3. Sizes
+CREATE TABLE IF NOT EXISTS sizes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    label VARCHAR(10) NOT NULL
+);
+
+INSERT INTO sizes (label) VALUES
+('2M'), ('4M'), ('6M'), ('8M'), ('10M'), ('12M');
+
+-- 4. Material + Size Price Mapping
+CREATE TABLE IF NOT EXISTS material_size_prices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    material_id INT,
+    size_id INT,
+    price DECIMAL(10,2),
+    FOREIGN KEY (material_id) REFERENCES materials(id),
+    FOREIGN KEY (size_id) REFERENCES sizes(id)
+);
+
+-- Example Data (from Excel)
+INSERT INTO material_size_prices (material_id, size_id, price) VALUES
+(1, 1, 585),     (1, 2, 760.5),   (1, 3, 994.5),   (1, 4, 1404),   (1, 5, 1989),
+(2, 1, 819),     (2, 2, 1115),    (2, 3, 1462.5),  (2, 4, 2035.8), (2, 5, 2925),
+(3, 1, 1193.4),  (3, 2, 1579.5),  (3, 3, 2047.5),  (3, 4, 2574),   (3, 5, 3748),
+(4, 1, 1427.4),  (4, 2, 1930.5),  (4, 3, 3100.5),  (4, 4, 3205.8), (4, 5, 4680);
+
+-- 5. Accessories
+CREATE TABLE IF NOT EXISTS accessories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    size INT,
+    price DECIMAL(10,2)
+);
+
+INSERT INTO accessories (name, size, price) VALUES
+('Blank', 2, 0),
+('Socket', 2, 234),
+('16A Socket', 2, 468),
+('Touch DoorBell', 2, 1287),
+('USB', 2, 2106),
+('RJ45', 2, 1053),
+('HDMI', 2, 1200);
+
+-- 6. Power Supply Options
+CREATE TABLE IF NOT EXISTS power_supply_options (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    size_id INT,
+    price DECIMAL(10,2),
+    switch INT,
+    fan INT,
+    dimmer INT,
+    curtain INT,
+    FOREIGN KEY (size_id) REFERENCES sizes(id)
+);
+
+-- Sample entries (you can expand later)
+INSERT INTO power_supply_options (name, size_id, price, switch, fan, dimmer, curtain) VALUES
+('Touch 2 Dimmer', 1, 3510, 0, 0, 2, 0),
+('Touch 2 Switch', 1, 2574, 2, 0, 0, 0),
+('Touch 4 Switch', 2, 3939.5, 4, 0, 0, 0),
+('Touch 6 Switch 6HV', 3, 6025.5, 6, 0, 0, 0),
+('Touch 6 Switch 2 Fan', 3, 8658, 2, 2, 0, 0),
+('Touch 10 Switch', 4, 7605, 10, 0, 0, 0);
+-------------------------------------------------------
+DELETE FROM material_size_prices;
+DELETE FROM materials;
+DELETE FROM sizes;
+DELETE FROM accessories;
+DELETE FROM power_supply_options;
+DELETE FROM categories;
+-----------------------------------------------------------
+-- 1. Category
+INSERT INTO categories (id, name, description) VALUES
+(1, 'Custom Touch Switch Board', 'Modular smart switchboards with configurable materials and components');
+
+-- 2. Sizes
+INSERT INTO sizes (id, label) VALUES
+(1, '2M'), (2, '4M'), (3, '6M'), (4, '8M'), (5, '10M'), (6, '12M');
+
+-- 3. Materials
+INSERT INTO materials (id, name, category_id) VALUES
+(1, 'Acrylic', 1),
+(2, 'Edge', 1),
+(3, 'Glass', 1),
+(4, 'Glass + Edge', 1),
+(5, 'Royal Edge', 1);
+
+-- 4. Material + Size Prices
+INSERT INTO material_size_prices (material_id, size_id, price) VALUES
+-- Acrylic
+(1, 1, 585), (1, 2, 760.5), (1, 3, 994.5), (1, 4, 1404), (1, 5, 1989), (1, 6, 2250),
+-- Edge
+(2, 1, 819), (2, 2, 1115), (2, 3, 1462.5), (2, 4, 2035.8), (2, 5, 2925), (2, 6, 3500),
+-- Glass
+(3, 1, 1193.4), (3, 2, 1579.5), (3, 3, 2047.5), (3, 4, 2574), (3, 5, 3748), (3, 6, 4250),
+-- Glass + Edge
+(4, 1, 1427.4), (4, 2, 1930.5), (4, 3, 3100.5), (4, 4, 3205.8), (4, 5, 4680), (4, 6, 5100),
+-- Royal Edge
+(5, 1, 1600), (5, 2, 2200), (5, 3, 2900), (5, 4, 3800), (5, 5, 4999), (5, 6, 5550);
+
+-- 5. Accessories
+INSERT INTO accessories (name, size, price) VALUES
+('Blank', 2, 0),
+('Socket', 2, 234),
+('16A Socket', 2, 468),
+('Touch DoorBell', 2, 1287),
+('USB', 2, 2106),
+('RJ45', 2, 1053),
+('HDMI', 2, 1200);
+
+-- 6. Power Supply Options
+INSERT INTO power_supply_options (name, size_id, price, switch, fan, dimmer, curtain) VALUES
+('Touch 2 Dimmer', 1, 3510, 0, 0, 2, 0),
+('Touch 2 Switch', 1, 2574, 2, 0, 0, 0),
+('Touch 4 Switch', 2, 3939.5, 4, 0, 0, 0),
+('Touch 6 Switch 6HV', 3, 6025.5, 6, 0, 0, 0),
+('Touch 6 Switch 2 Fan', 3, 8658, 2, 2, 0, 0),
+('Touch 8 Switch', 4, 7250, 8, 0, 0, 0),
+('Touch 10 Switch', 5, 7605, 10, 0, 0, 0);
+---------------------------------------
+
+INSERT INTO users (full_name, email, password) 
+VALUES ('ranjan', 'ranjan@gmail.com', 'ranjan123');
+-----------------------------------------
+{
+  "email": "sid@example.com",
+  "password": "pass1234"
+}
+
+

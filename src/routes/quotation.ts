@@ -1,12 +1,14 @@
-import express from 'express';
-import { getQuotationPreview, saveQuotation } from '../controllers/quotationController';
+import { Router } from 'express';
+import {
+  getQuotationPreview,
+  saveQuotation,
+  getQuotationById,
+} from '../controllers/quotationController';
 
-const router = express.Router();
+const router = Router();
 
-// POST /api/quotation/preview → calculate quotation
 router.post('/preview', getQuotationPreview);
-
-// POST /api/quotation/save → persist quotation
 router.post('/save', saveQuotation);
+router.get('/:id', getQuotationById); // ✅ This is the new route
 
 export default router;

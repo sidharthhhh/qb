@@ -18,7 +18,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/quotation', quotationRoutes);
 
-
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
